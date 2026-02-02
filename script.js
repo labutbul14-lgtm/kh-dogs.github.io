@@ -2,15 +2,19 @@
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navMenu = document.getElementById('navMenu');
 
-mobileMenuBtn.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+if (mobileMenuBtn && navMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Close menu when clicking on a link
 const navLinks = document.querySelectorAll('nav a');
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        if (navMenu) {
+            navMenu.classList.remove('active');
+        }
     });
 });
 
@@ -20,10 +24,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         
         const targetId = this.getAttribute('href');
-        if(targetId === '#') return;
+        if (targetId === '#') return;
         
         const targetElement = document.querySelector(targetId);
-        if(targetElement) {
+        if (targetElement) {
             window.scrollTo({
                 top: targetElement.offsetTop - 80,
                 behavior: 'smooth'
@@ -43,40 +47,69 @@ window.addEventListener('scroll', () => {
         const sectionTop = section.offsetTop - 100;
         const sectionHeight = section.clientHeight;
         
-        if(pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+        if (window.pageYOffset >= sectionTop && window.pageYOffset < sectionTop + sectionHeight) {
             currentSection = section.getAttribute('id');
         }
     });
     
     navLinks.forEach(link => {
         link.classList.remove('active');
-        if(link.getAttribute('href') === `#${currentSection}`) {
+        if (link.getAttribute('href') === `#${currentSection}`) {
             link.classList.add('active');
         }
     });
 });
 
-// Gallery image click to enlarge (optional enhancement)
+// Gallery image click handler
 const galleryItems = document.querySelectorAll('.gallery-item');
 galleryItems.forEach(item => {
     item.addEventListener('click', () => {
-        const imgSrc = item.querySelector('img').src;
-        // You can add a lightbox functionality here
-        console.log('Image clicked:', imgSrc);
-        // For now, just open the image in a new tab
-        window.open(imgSrc, '_blank');
+        const img = item.querySelector('img');
+        if (img && img.src) {
+            // Open image in new tab
+            window.open(img.src, '_blank');
+        }
     });
 });
 
-// Form submission handling (if you add a contact form later)
-function handleFormSubmit(event) {
-    event.preventDefault();
-    alert('תודה על פנייתך! נחזור אליך בהקדם.');
-    // Here you would typically send the form data to a server
+// Add loading animation for images
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('img');
+    images.forEach(img => {
+        // Add loading animation
+        img.addEventListener('load', function() {
+            this.style.opacity = '1';
+            this.style.transition = 'opacity 0.3s ease';
+        });
+        
+        // Set initial opacity for fade-in effect
+        img.style.opacity = '0';
+        
+        // If image is already loaded (cached)
+        if (img.complete) {
+            img.style.opacity = '1';
+        }
+    });
+});
+
+// Form validation for future contact form
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
 }
 
-// Add this if you decide to add a contact form
-// const contactForm = document.getElementById('contactForm');
-// if (contactForm) {
-//     contactForm.addEventListener('submit', handleFormSubmit);
-// }
+function validatePhone(phone) {
+    const re = /^[\d\s\-\(\)\+]+$/;
+    return re.test(phone);
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('אתר קובי חתן - אילוף כלבים מוכן!');
+    
+    // Add current year to footer (optional)
+    const yearSpan = document.getElementById('current-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+});
